@@ -1,6 +1,6 @@
 {
   "name": "jstub",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "simplifyied javascript functions and libraries for effortless coding",
   "keywords": [],
   "main": "index.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/webcdn/shaky-js.git"
+    "url": "git+https://github.com/vulrun/jstub.git"
   },
   "author": "Foo Bar <foob2200@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/webcdn/shaky-js/issues"
+    "url": "https://github.com/vulrun/jstub/issues"
   },
-  "homepage": "https://github.com/webcdn/shaky-js#readme",
+  "homepage": "https://github.com/vulrun/jstub#readme",
   "dependencies": {
     "axios": "^1.6.0",
     "lodash": "^4.17.21"
