@@ -1,4 +1,4 @@
-module.exports = () => responses;
+module.exports = responses;
 
 function responses(req, res, next) {
   res.success = (message = "", result = {}) => {
@@ -13,9 +13,9 @@ function responses(req, res, next) {
     });
   };
 
-  res.error = (status = 400, error) => {
-    status = status || 400;
+  res.error = (error, status) => {
     error = error || {};
+    status = status || 400;
 
     return res.status(status).json({
       message: error?.message || error || "SOMETHING_WENT_WRONG",

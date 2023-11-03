@@ -3,8 +3,8 @@ const LRU = require("lru-cache");
 
 module.exports = {
   MemCache: new Map(),
-  LruCache: new LruCache(),
   TtlCache: new TtlCache(),
+  LruCache: () => new LruCache(...arguments),
 };
 
 function LruCache({ max, maxAge }, options) {
@@ -27,6 +27,7 @@ function TtlCache() {
   this.has = (k) => data.has(k);
   this.get = (k) => data.get(k);
   this.set = (k, v, ttl = 0) => {
+    ttl = String(ttl || "0");
     if (timers.has(k)) clearTimeout(timers.get(k));
     const timer = setTimeout(() => this.delete(k), ms(ttl));
     timers.set(k, timer);
