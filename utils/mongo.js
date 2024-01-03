@@ -26,7 +26,7 @@ async function connect(url) {
   return;
 }
 
-function model(collection, schema) {
+function model(collection, schema, cb) {
   if (!collection) throw new Error("collection is missing");
   schema = schema || {};
 
@@ -38,6 +38,8 @@ function model(collection, schema) {
     versionKey: false,
     collection: collection,
   });
+
+  if (typeof cb === "function") cb(DocSchema);
 
   return mongoose.model(collection, DocSchema);
 }
