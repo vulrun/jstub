@@ -1,4 +1,4 @@
 module.exports = {
-  middlewares: require("./responses"),
+  middlewares: require("./middlewares"),
   functions: require("./functions"),
 };

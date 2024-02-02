@@ -76,8 +76,8 @@ function cleanJson(data) {
   }
 }
 
-function getObjPropValue(obj, path) {
-  if (!path) return obj;
+function getObjPropValue(obj, path, _def) {
+  if (!path) return obj || _def;
 
   if (Array.isArray(path)) {
     const [top, ...rest] = path;
@@ -87,15 +87,15 @@ function getObjPropValue(obj, path) {
     path = rest;
 
     // oops, nullish value
-    if (!obj) return obj;
+    if (!obj) return obj || _def;
 
     // wow, this is last level
-    if (rest.length === 0) return obj;
+    if (rest.length === 0) return obj || _def;
   } else {
     path = String(path).split(".");
   }
 
-  return getObjPropValue(obj, path);
+  return getObjPropValue(obj, path, _def);
 }
 
 function extendObj(ref, ...objs) {

@@ -1,5 +1,4 @@
 const ms = require("ms");
-const LRU = require("lru-cache");
 
 module.exports = {
   MemCache: new Map(),
@@ -11,6 +10,7 @@ function LruCache({ max, maxAge }, options) {
   max = max || 500;
   maxAge = maxAge || "6h";
 
+  const LRU = require("lru-cache");
   const cache = new LRU({
     max: max,
     maxAge: maxAge === "string" ? ms("6h") : +maxAge,

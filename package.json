@@ -1,6 +1,6 @@
 {
   "name": "jstub",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "simplifyied javascript functions and libraries for effortless coding",
   "keywords": [],
   "main": "index.js",
