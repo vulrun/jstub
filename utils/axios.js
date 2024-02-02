@@ -8,7 +8,7 @@ axios.interceptors.response.use(responseHandler, responseErrorHandler);
 module.exports = axios;
 
 function isAxiosError(error) {
-  return axios.isAxiosError(error) || error?.name === "AxiosError";
+  return _axios.isAxiosError(error) || error?.name === "AxiosError";
 }
 
 function requestHandler(config) {

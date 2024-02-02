@@ -15,10 +15,10 @@ function responses(req, res, next) {
 
   res.error = (error, status) => {
     error = error || {};
-    status = status || 400;
+    status = status || error?.status || 400;
 
     return res.status(status).json({
-      message: error?.message || error || "SOMETHING_WENT_WRONG",
+      message: _errorMessage(error),
       success: false,
       status: status,
       result: error,
@@ -27,4 +27,11 @@ function responses(req, res, next) {
 
   next();
   return;
+}
+
+function _errorMessage(error) {
+  if (typeof error?.message === "string") return error?.message;
+  if (typeof error === "string") return error;
+
+  return "SOMETHING_WENT_WRONG";
 }

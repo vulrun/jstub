@@ -6,10 +6,12 @@ module.exports = {
   randomNumber,
   randomString,
   sanitize,
+  rot31,
   rot13,
   reverseStr,
   trimStr,
   slugify,
+  stringify,
   uuid,
   uuid4,
 };
@@ -61,6 +63,22 @@ function sanitize(str) {
     .replace(/\s+$/g, "");
 }
 
+function rot31(str) {
+  const set = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  let result = "";
+  let i = 0;
+  do {
+    const idx = set.indexOf(str[i]);
+    const rot = (idx + set.length / 2) % set.length;
+    result += ~idx ? set[rot] : str[i];
+
+    i++;
+  } while (i < str.length);
+
+  return result;
+}
+
 function rot13(str) {
   return String(str).replace(/[a-z]/gi, (c) => String.fromCharCode(c.charCodeAt() + 13 - 26 * /[n-z]/i.test(c)));
 }
@@ -91,6 +109,12 @@ function slugify(str, sep) {
   // trim seperators
   str = str.replace(new RegExp("^" + sep + "|" + sep + "$", "g"), "");
   return str;
+}
+
+function stringify(data) {
+  if (!data) return "";
+  if (typeof data !== "string") return JSON.stringify(data);
+  return data;
 }
 
 function uuid() {
