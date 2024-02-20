@@ -6,7 +6,7 @@ const objects = require("./objects.func");
 const parsings = require("./parsings.func");
 const strings = require("./strings.func");
 
-module.exports = {
+const jstub = {
   ...cases,
   ...cryptos,
   ...dates,
@@ -15,3 +15,13 @@ module.exports = {
   ...parsings,
   ...strings,
 };
+
+if (typeof define === "function" && define.amd) {
+  define(function () {
+    return jstub;
+  });
+} else if (typeof module === "object" && module.exports) {
+  module.exports = jstub;
+} else {
+  $.jstub = jstub;
+}

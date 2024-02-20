@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
-global.ObjectId = mongoose.Types.ObjectId;
 
 module.exports = {
-  ObjectId,
   mongoose,
   client: mongoose,
   connect,
