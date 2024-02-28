@@ -116,5 +116,6 @@ dist
 .pnp.*
 
 # misc
-.trash*
-package-lock.json
+**/.trash*
+**/test
+**/package-lock.json
