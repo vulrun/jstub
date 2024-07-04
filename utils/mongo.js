@@ -13,10 +13,7 @@ async function connect(url) {
 
     mongoose.set("strictQuery", false);
 
-    await mongoose.connect(url, {
-      useUnifiedTopology: true,
-      useNewUrlParser: true,
-    });
+    await mongoose.connect(url, {});
     console.log("mongo connected");
   } catch (error) {
     console.error("mongo", error);

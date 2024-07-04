@@ -1,6 +1,6 @@
-const https = require("https");
 const _axios = require("axios");
 const axios = _axios.create();
+const { HttpsProxyAgent } = require("https-proxy-agent");
 
 axios.interceptors.request.use(requestHandler, requestErrorHandler);
 axios.interceptors.response.use(responseHandler, responseErrorHandler);
@@ -12,15 +12,28 @@ function isAxiosError(error) {
 }
 
 function requestHandler(config) {
-  if (!config?.headers["Content-Type"]) {
-    config.headers["Content-Type"] = "application/json";
+  const isHttps = config.url.startsWith("https://");
+
+  if (config.proxy && isHttps) {
+    if (typeof config.proxy === "string") {
+      config.httpsAgent = new HttpsProxyAgent(config.proxy);
+    } else if (config.proxy.auth) {
+      const proxyAuth = typeof config.proxy.auth === "string" ? config.proxy.auth : `${config.proxy.auth.username}:${config.proxy.auth.password}`;
+      config.httpsAgent = new HttpsProxyAgent(`http://${proxyAuth}@${config.proxy.host}:${config.proxy.port}`);
+    } else {
+      config.httpsAgent = new HttpsProxyAgent(`http://${config.proxy.host}:${config.proxy.port}`);
+    }
+    config.proxy = false;
   }
-  if (!config?.headers["User-Agent"]) {
-    config.headers["User-Agent"] = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36";
+
+  config.headers = lowercaseProperty(config.headers);
+  if (!config?.headers["content-type"]) {
+    config.headers["content-type"] = "application/json";
   }
-  if (process.env?.NODE_ENV?.startsWith("dev")) {
-    config.httpsAgent = new https.Agent({ rejectUnauthorized: false });
+  if (!config?.headers["user-agent"]) {
+    config.headers["user-agent"] = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36";
   }
+
   return config;
 }
 
@@ -79,4 +92,14 @@ function httpErrorHandler(error) {
     }
   }
   throw new Error(error.message);
+}
+
+function lowercaseProperty(obj) {
+  const newObj = {};
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      newObj[key.toLowerCase()] = obj[key];
+    }
+  }
+  return newObj;
 }
