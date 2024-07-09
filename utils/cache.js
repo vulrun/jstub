@@ -1,26 +1,8 @@
 const ms = require("ms");
 
-module.exports = {
-  MemCache: new Map(),
-  TtlCache: new TtlCache(),
-  LruCache: () => new LruCache(...arguments),
-};
+module.exports.MemCache = new Map();
 
-function LruCache({ max, maxAge }, options) {
-  max = max || 500;
-  maxAge = maxAge || "6h";
-
-  const LRU = require("lru-cache");
-  const cache = new LRU({
-    max: max,
-    maxAge: maxAge === "string" ? ms("6h") : +maxAge,
-    ...options,
-  });
-
-  return cache;
-}
-
-function TtlCache() {
+module.exports.TtlCache = function () {
   const data = new Map();
   const timers = new Map();
 
@@ -48,7 +30,46 @@ function TtlCache() {
   };
 
   return this;
+};
+
+class LruCache extends Map {
+  constructor(iterable, limit) {
+    if (typeof iterable === "number") {
+      limit = iterable;
+      iterable = undefined;
+    }
+
+    super(iterable);
+    this.limit = Number(limit) || 100;
+  }
+
+  get(key) {
+    if (!super.has(key)) return null;
+
+    // move the accessed item to the end of Map to mark it as recently used
+    const value = super.get(key);
+    super.delete(key);
+    super.set(key, value);
+
+    return value;
+  }
+  set(key, value) {
+    if (super.has(key)) {
+      // if value exists, delete the old cache
+      super.delete(key);
+    }
+    if (super.size >= this.limit) {
+      // remove the least recently used item (first item in the map)
+      const oldestKey = super.keys().next().value;
+      super.delete(oldestKey);
+    }
+
+    super.set(key, value);
+    return value;
+  }
 }
+
+module.exports.LruCache = LruCache;
 
 // will plan this
 // function memoize(fn, delAfter = 1000000) {
@@ -66,3 +87,14 @@ function TtlCache() {
 
 // // Will only do a single fetch.
 // console.log(await foo(), await foo())
+
+// class CustomError extends Error {
+//     constructor(code, message) {
+//       message = message || messages?.error_message?.[code];
+//       super(message);
+//       // this.name = this.constructor.name;
+//       this.code = code;
+//       this.error = message;
+//       Error.captureStackTrace(this, this.constructor);
+//     }
+//   }
