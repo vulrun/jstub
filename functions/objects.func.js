@@ -113,15 +113,18 @@ function extendObj(ref, ...objs) {
   return org;
 }
 
-function toObject(data, key, val) {
+function toObject(data, key, val, keyFunc, valFunc) {
   if (!Array.isArray(data)) throw new Error("INVALID_DATA");
+  if (data.length <= 0) return {};
   if (!key || typeof key !== "string") throw new Error("INVALID_KEY");
 
   const newObj = {};
-  if (data.length > 0) {
-    for (const item of data) {
-      newObj[item[key] + ""] = !!val ? item[val] : item;
-    }
+  for (const item of data) {
+    let k = String(item[key]);
+    let v = !!val ? item[val] : item;
+    if (typeof keyFunc === "function") k = keyFunc(k);
+    if (typeof valFunc === "function") v = valFunc(v);
+    newObj[k] = v;
   }
   return newObj;
 }

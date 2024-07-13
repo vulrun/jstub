@@ -77,7 +77,10 @@ function httpErrorHandler(error) {
       throw new Error("API_REQUEST_FAILED");
     } else if (error.code === "ETIMEDOUT") {
       throw new Error("API_REQUEST_TIMEOUT");
+    } else {
+      console.log("🚀 ~ httpErrorHandler ~ error.code:", error.code);
     }
+
     if (response) {
       const statusCode = response?.status;
       if (statusCode === 404) {
@@ -85,10 +88,13 @@ function httpErrorHandler(error) {
       } else if (statusCode === 401) {
         throw new Error("UNAUTHORIZED_API_REQUEST");
         // redirect user to login
+      } else if (statusCode === 403) {
+        throw new Error("FORBIDDEN_API_REQUEST");
+        // redirect user to login
       }
       return error?.response?.data;
     } else if (request) {
-      //The request was made but no response was received, `error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in Node.js
+      // request was made but no response was received, `error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in Node.js
     }
   }
   throw new Error(error.message);
