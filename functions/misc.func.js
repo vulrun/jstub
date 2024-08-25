@@ -70,6 +70,8 @@ function maskData(str) {
 }
 
 function findAll(data, pipeline) {
+  if (!data) throw new Error("[data] is needed");
+  if (!Array.isArray(pipeline)) throw new Error("[pipeline] must be a array");
   if (!pipeline.length) return data;
 
   for (let operation of pipeline) {

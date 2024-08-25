@@ -128,3 +128,45 @@ function toObject(data, key, val, keyFunc, valFunc) {
   }
   return newObj;
 }
+
+module.exports.toObject = (data, key, val) => {
+  if (!Array.isArray(data)) throw new Error("INVALID_DATA");
+  if (!key || typeof key !== "string") throw new Error("INVALID_KEY");
+
+  const newObj = {};
+  if (data.length > 0) {
+    for (const item of data) {
+      newObj[item[key] + ""] = !!val ? item[val] : item;
+    }
+  }
+  return newObj;
+};
+
+module.exports.removeFalsy = (obj) => {
+  const newObj = {};
+  for (const prop of Object.keys(obj)) {
+    if (obj[prop]) {
+      newObj[prop] = obj[prop];
+    }
+  }
+  return newObj;
+};
+
+module.exports.asSet = function asSet(array) {
+  // make it unique
+  array = array.filter((value, index, self) => self.indexOf(value) === index);
+
+  this.get = (index) => (typeof index === "number" ? array[index] : array);
+
+  this.has = (value) => ~array.indexOf(value);
+
+  this.add = (value) => (array.indexOf(value) > -1 ? array.slice(0) : array.concat([value]));
+
+  this.del = (value) => {
+    const index = array.indexOf(value);
+    if (index > -1) array.splice(index, 1);
+    return array;
+  };
+
+  return this;
+};

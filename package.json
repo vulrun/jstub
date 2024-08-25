@@ -1,10 +1,18 @@
 {
   "name": "jstub",
   "version": "0.0.9",
-  "description": "simplifyied javascript functions and libraries for effortless coding",
+  "description": "simplifyied javascript functions, libraries and utilities for effortless coding",
   "keywords": [],
   "main": "index.js",
+  "files": [
+    "index.js",
+    "data/",
+    "functions/",
+    "middlewares/",
+    "utils/"
+  ],
   "scripts": {
+    "prebuild": "node scripts/gen-data-cipherAlgorithms.js && node scripts/gen-functions-index.js",
     "predeploy": "npx auto-version && prettier package.json --write",
     "deploy": "npm publish",
     "test": "jest"

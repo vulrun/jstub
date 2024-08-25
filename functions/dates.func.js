@@ -127,3 +127,100 @@ function timeFormat(secs) {
   out = out.map((i) => String(i).padStart(2, "0")).join(":");
   return out;
 }
+
+function dateFormat(date, format) {
+  // Format: "It's [ddd] today, I'm coding on [MMM DD, YYYY] at [hh:mm:ss]. My Timezone is [ZZ], which is a [zz]."
+  // Usage: dateFormat('2020-01-25')
+  // Usage: dateFormat(new Date(), <format_pattern>)
+
+  if (!date) date = Date.now();
+  if (!format) return new Date(date).toString();
+
+  // listing all the possible keys to regexp
+  const regExMaps = {
+    ddd: new RegExp("sun|mon|tue|wed|thu|fri|sat", "i"),
+    MMM: new RegExp("jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec", "i"),
+    DD: /\d{2}(?=\s\d{4}\s)/,
+    YYYY: /\d{4}(?=\s\d{2}:\d{2}:\d{2})/,
+    hh: /\d{2}(?=:\d{2}:\d{2})/,
+    mm: /\d{2}(?=:\d{2}\s)/,
+    ss: /\d{2}(?=\s[A-Z]{3})/,
+    ZZ: /(?<=GMT)[+-]?\d{4}/,
+    zz: /(?<=GMT[+-]?\d{4}\s\()[\w\s]+(?=\))/,
+  };
+
+  // creating regexp to query the string
+  const regExKeys = new RegExp(Object.keys(regExMaps).join("|"), "gi");
+
+  let str = format;
+  // extracting the matchable words & looping through
+  format.match(regExKeys).forEach((regEx) => {
+    if (regExMaps[regEx]) str = str.replace(regEx, new Date(date).toString().match(regExMaps[regEx]));
+  });
+
+  return str;
+}
+
+function timeDuration(val, { as, tiny = false }) {
+  val = typeof val === "number" && isFinite(val) ? Math.abs(val) : Date.now() - parseInt(val);
+
+  if (!val) throw new Error("val is not a non-empty string or a valid number. val=" + JSON.stringify(val));
+
+  const tinyUnit = { Y: "yr", M: "month", W: "wk", D: "day", h: "hr", m: "min", s: "sec" };
+  const longUnit = { Y: "year", M: "month", W: "week", D: "day", h: "hour", m: "minute", s: "second" };
+
+  const _s = 1000;
+  const _m = _s * 60;
+  const _h = _m * 60;
+  const _d = _h * 24;
+  const period = {
+    Y: _d * 365.25,
+    M: _d * 30,
+    W: _d * 7,
+    D: _d,
+    h: _h,
+    m: _m,
+    s: _s,
+  };
+
+  let num, unit;
+  if (as) {
+    unit = as;
+    num = Math.floor(val / period[unit]);
+  } else {
+    for (unit in period) {
+      const unitInMs = period[unit];
+      if (val < unitInMs) continue;
+
+      num = Math.floor(val / unitInMs);
+      break;
+    }
+  }
+
+  this.format = function (str) {
+    return String(str || "%d%s")
+      .replace(/%d/g, num)
+      .replace(/%s/g, unit)
+      .replace(/%S/g, (!!tiny ? tinyUnit[unit] : longUnit[unit]) + (num > 1 ? "s" : ""));
+  };
+
+  return this;
+}
+
+function parseDate(inp) {
+  let matched;
+  const time24RegEx = /^\s*(?:0?\d|1\d|2[0123])(?:\:[012345]\d)(?:\:[012345]\d)?(?!\:)\s*$/gm;
+  const time12RegEx = /^\s*((?:0?\d|1[012])(?:\:[012345]\d)(?:\:[012345]\d)?)(?!\:)\s?([aApP][mM])\s*$/gm;
+
+  if ((matched = time24RegEx.exec(inp))) {
+    inp = `1970-01-01 ${inp} +0:00`;
+    return Date.parse(inp);
+  }
+
+  if ((matched = time12RegEx.exec(inp))) {
+    inp = `1970-01-01 ${matched[1]} +0:00`;
+    return Date.parse(inp) + (matched[2].toLowerCase() == "pm" ? 12 * 60 * 60 * 1e3 : 0);
+  }
+
+  return Date.parse(inp);
+}

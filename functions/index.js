@@ -1,27 +1,70 @@
-const cases = require("./cases.func");
-const cryptos = require("./cryptos.func");
-const dates = require("./dates.func");
-const misc = require("./misc.func");
-const objects = require("./objects.func");
-const parsings = require("./parsings.func");
-const strings = require("./strings.func");
-
-const jstub = {
-  ...cases,
-  ...cryptos,
-  ...dates,
-  ...misc,
-  ...objects,
-  ...parsings,
-  ...strings,
+module.exports = {
+	addToSet: require("./objects.func")["addToSet"],
+	asSet: require("./objects.func")["asSet"],
+	base64Decode: require("./_cryptos")["base64Decode"],
+	base64Encode: require("./_cryptos")["base64Encode"],
+	base64UrlDecode: require("./_cryptos")["base64UrlDecode"],
+	base64UrlEncode: require("./_cryptos")["base64UrlEncode"],
+	calcAge: require("./extras")["calcAge"],
+	calcAge: require("./misc.func")["calcAge"],
+	calcKms: require("./extras")["calcKms"],
+	calcKms: require("./misc.func")["calcKms"],
+	cleanJson: require("./objects.func")["cleanJson"],
+	createMongoDbLikeId: require("./extras")["createMongoDbLikeId"],
+	dateMs: require("./dates.func")["dateMs"],
+	debounce: require("./_timers")["debounce"],
+	deepCopy: require("./misc.func")["deepCopy"],
+	delay: require("./misc.func")["delay"],
+	extendObj: require("./objects.func")["extendObj"],
+	findAll: require("./misc.func")["findAll"],
+	getObjPropValue: require("./objects.func")["getObjPropValue"],
+	hexDecode: require("./_cryptos")["hexDecode"],
+	hexEncode: require("./_cryptos")["hexEncode"],
+	isArray: require("./_generics")["isArray"],
+	isBoolean: require("./_generics")["isBoolean"],
+	isEmpty: require("./_generics")["isEmpty"],
+	isJson: require("./_generics")["isJson"],
+	isNull: require("./_generics")["isNull"],
+	isNumber: require("./_generics")["isNumber"],
+	isObject: require("./_generics")["isObject"],
+	isString: require("./_generics")["isString"],
+	isUndefined: require("./_generics")["isUndefined"],
+	limitNum: require("./strings.func")["limitNum"],
+	maskData: require("./misc.func")["maskData"],
+	md5: require("./_cryptos")["md5"],
+	minRoll: require("./extras")["minRoll"],
+	mongoObjectId: require("./extras")["mongoObjectId"],
+	normalCase: require("./normalCase"),
+	parseEmail: require("./parsings.func")["parseEmail"],
+	parseUri: require("./parsings.func")["parseUri"],
+	prettyCase: require("./prettyCase")["prettyCase"],
+	randomNumber: require("./strings.func")["randomNumber"],
+	randomString: require("./strings.func")["randomString"],
+	removeFalsy: require("./objects.func")["removeFalsy"],
+	removeFromSet: require("./objects.func")["removeFromSet"],
+	replaceParams: require("./misc.func")["replaceParams"],
+	reverseStr: require("./strings.func")["reverseStr"],
+	rot13: require("./strings.func")["rot13"],
+	rot31: require("./strings.func")["rot31"],
+	safeJsonParse: require("./parsings.func")["safeJsonParse"],
+	sanitize: require("./strings.func")["sanitize"],
+	sha256: require("./_cryptos")["sha256"],
+	slugify: require("./strings.func")["slugify"],
+	sortArr: require("./objects.func")["sortArr"],
+	sortObj: require("./objects.func")["sortObj"],
+	stringify: require("./strings.func")["stringify"],
+	throttle: require("./_timers")["throttle"],
+	timeAgo: require("./dates.func")["timeAgo"],
+	timeAgo: require("./extras")["timeAgo"],
+	timeFormat: require("./dates.func")["timeFormat"],
+	titleCase: require("./titleCase")["titleCase"],
+	toDecimals: require("./numbers.func")["toDecimals"],
+	toDecimals: require("./strings.func")["toDecimals"],
+	toObject: require("./objects.func")["toObject"],
+	trimStr: require("./strings.func")["trimStr"],
+	uriParser: require("./extras")["uriParser"],
+	urlLocation: require("./extras")["urlLocation"],
+	urlLocation: require("./parsings.func")["urlLocation"],
+	uuid: require("./strings.func")["uuid"],
+	uuid4: require("./strings.func")["uuid4"],
 };
-
-if (typeof define === "function" && define.amd) {
-  define(function () {
-    return jstub;
-  });
-} else if (typeof module === "object" && module.exports) {
-  module.exports = jstub;
-} else {
-  $.jstub = jstub;
-}
