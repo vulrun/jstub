@@ -11,9 +11,20 @@ module.exports = {
 };
 
 function deepCopy(data) {
-  data = JSON.stringify(data);
-  data = JSON.parse(data);
-  return data;
+  if (!data) return data;
+
+  const seen = new WeakSet();
+  const retVal = JSON.stringify(data, (key, value) => {
+    if (typeof value === "object" && value !== null) {
+      // duplicate reference found
+      if (seen.has(value)) return "[Circular]";
+      // add this reference for future use
+      seen.add(value);
+    }
+    return value;
+  });
+
+  return JSON.parse(retVal);
 }
 
 function delay(ms) {
