@@ -1,26 +1,8 @@
 const ms = require("ms");
 
-module.exports = {
-  MemCache: new Map(),
-  TtlCache: new TtlCache(),
-  LruCache: () => new LruCache(...arguments),
-};
+module.exports.MemCache = () => new Map();
 
-function LruCache({ max, maxAge }, options) {
-  max = max || 500;
-  maxAge = maxAge || "6h";
-
-  const LRU = require("lru-cache");
-  const cache = new LRU({
-    max: max,
-    maxAge: maxAge === "string" ? ms("6h") : +maxAge,
-    ...options,
-  });
-
-  return cache;
-}
-
-function TtlCache() {
+module.exports.TtlCache = function TtlCache() {
   const data = new Map();
   const timers = new Map();
 
@@ -50,19 +32,39 @@ function TtlCache() {
   return this;
 }
 
-// will plan this
-// function memoize(fn, delAfter = 1000000) {
-//   const missing = Symbol("missing");
-//   let cache = missing;
-//   return async () => {
-//     if (cache === missing) {
-//        cache = Promise.resolve(fn());
-//        setTimeout(() => cache = missing, delAfter);
-//     }
-//     return await cache;
-//   }
-// }
-// const foo = memoize(() => fetch("https://foo/bar", { method: " POST", body: JSON.stringify({bar:1}) }))
+module.exports.LruCache = class LruCache extends Map {
+  constructor(iterable, limit) {
+    if (typeof iterable === "number") {
+      limit = iterable;
+      iterable = undefined;
+    }
 
-// // Will only do a single fetch.
-// console.log(await foo(), await foo())
+    super(iterable);
+    this.limit = Number(limit) || 100;
+  }
+
+  get(key) {
+    if (!super.has(key)) return null;
+
+    // move the accessed item to the end of Map to mark it as recently used
+    const value = super.get(key);
+    super.delete(key);
+    super.set(key, value);
+
+    return value;
+  }
+  set(key, value) {
+    if (super.has(key)) {
+      // if value exists, delete the old cache
+      super.delete(key);
+    }
+    if (super.size >= this.limit) {
+      // remove the least recently used item (first item in the map)
+      const oldestKey = super.keys().next().value;
+      super.delete(oldestKey);
+    }
+
+    super.set(key, value);
+    return value;
+  }
+}
