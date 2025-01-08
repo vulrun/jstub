@@ -62,9 +62,6 @@ function model(collection, schema, cb) {
 //   return;
 // }
 
-// const JsonDB = require("../../helpers/JsonDB");
-// const jsondb = new JsonDB({ dbFolder: ".trash", dbName: "mobikwik_biller_config_v4" });
-
 // DocSchema.pre(/save|create|update/, async function (next) {
 //   try {
 //     const newPayload = this.getUpdate().$set;

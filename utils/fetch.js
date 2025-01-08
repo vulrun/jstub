@@ -1,5 +1,5 @@
-const http = require("http");
-const https = require("https");
+const http = require("node:http");
+const https = require("node:https");
 
 /**
  * @desc complete bare url fetch function
@@ -20,45 +20,43 @@ module.exports = fetch;
 function fetch() {
   let url, opts, post, cb;
   if (arguments.length === 4) {
-    url = arguments[0];
-    opts = arguments[1];
-    post = arguments[2];
-    cb = arguments[3];
+    [url, opts, post, cb] = arguments;
   } else if (arguments.length === 3) {
-    url = arguments[0];
-    opts = arguments[1];
-    if (typeof arguments[2] === "function") cb = arguments[2];
-    else {
+    [url, opts] = arguments;
+    if (typeof arguments[2] === "function") {
+      cb = arguments[2];
+    } else {
       post = arguments[2];
     }
   } else if (arguments.length === 2) {
     url = arguments[0];
-    if (typeof arguments[1] === "function") cb = arguments[1];
-    else {
+    if (typeof arguments[1] === "function") {
+      cb = arguments[1];
+    } else {
       opts = arguments[1];
     }
   } else {
     url = arguments[0];
   }
 
-  const client = String(url).indexOf("https") === 0 ? https : http;
+  const client = String(url).startsWith("https") ? https : http;
   const headers = {};
 
   if (typeof post === "string") {
-    headers["Content-Type"] = "application/x-www-form-urlencoded";
-    headers["Content-Length"] = post.length || 0;
+    headers["content-type"] = "application/x-www-form-urlencoded";
+    headers["content-length"] = post.length || 0;
   } else if (typeof post === "object") {
     post = JSON.stringify(post);
-    headers["Content-Type"] = "application/json";
-    headers["Content-Length"] = post.length || 0;
+    headers["content-type"] = "application/json";
+    headers["content-length"] = post.length || 0;
   } else {
     post = undefined;
   }
 
   const options = {
     method: post ? "POST" : "GET",
+    headers: { ...headers, ...opts?.headers },
     timeout: 15e3,
-    headers: Object.assign({}, headers, opts?.headers),
   };
 
   // console.log({ url, opts, post, cb, options });
@@ -75,9 +73,7 @@ function fetch() {
       });
     });
 
-    req.on("error", (err) => {
-      reject(err);
-    });
+    req.on("error", (err) => reject(err));
 
     req.on("timeout", () => {
       req.destroy();
@@ -88,6 +84,6 @@ function fetch() {
     req.end();
   });
 
-  if (typeof cb != "function") return promise;
+  if (typeof cb !== "function") return promise;
   promise.then((res) => cb(null, res)).catch((err) => cb(err));
 }
