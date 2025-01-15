@@ -1,27 +1,71 @@
-const cases = require("./cases.func");
-const cryptos = require("./cryptos.func");
-const dates = require("./dates.func");
-const misc = require("./misc.func");
-const objects = require("./objects.func");
-const parsings = require("./parsings.func");
-const strings = require("./strings.func");
-
-const jstub = {
-  ...cases,
-  ...cryptos,
-  ...dates,
-  ...misc,
-  ...objects,
-  ...parsings,
-  ...strings,
+module.exports = {
+	applyAggregation: require("./misc")["applyAggregation"],
+	base64Decode: require("./cryptos")["base64Decode"],
+	base64Encode: require("./cryptos")["base64Encode"],
+	base64UrlDecode: require("./cryptos")["base64UrlDecode"],
+	base64UrlEncode: require("./cryptos")["base64UrlEncode"],
+	calcAge: require("./misc")["calcAge"],
+	calcKms: require("./misc")["calcKms"],
+	cleanJson: require("./objects")["cleanJson"],
+	dateFormat: require("./dates")["dateFormat"],
+	dateMs: require("./dates")["dateMs"],
+	debounce: require("./timers")["debounce"],
+	deepCopy: require("./misc")["deepCopy"],
+	delay: require("./misc")["delay"],
+	extendObj: require("./objects")["extendObj"],
+	extractStackTrace: require("./misc")["extractStackTrace"],
+	formatBytes: require("./misc")["formatBytes"],
+	generateNonce: require("./strings")["generateNonce"],
+	getObjPropValue: require("./objects")["getObjPropValue"],
+	hexDecode: require("./cryptos")["hexDecode"],
+	hexEncode: require("./cryptos")["hexEncode"],
+	isArray: require("./dataType")["isArray"],
+	isBoolean: require("./dataType")["isBoolean"],
+	isDate: require("./dataType")["isDate"],
+	isEmpty: require("./dataType")["isEmpty"],
+	isJson: require("./dataType")["isJson"],
+	isNull: require("./dataType")["isNull"],
+	isNullish: require("./dataType")["isNullish"],
+	isNumber: require("./dataType")["isNumber"],
+	isObject: require("./dataType")["isObject"],
+	isString: require("./dataType")["isString"],
+	isStringValid: require("./dataType")["isStringValid"],
+	isUndefined: require("./dataType")["isUndefined"],
+	limitNum: require("./strings")["limitNum"],
+	maskString: require("./misc")["maskString"],
+	md5: require("./cryptos")["md5"],
+	memoize: require("./timers")["memoize"],
+	parseEmail: require("./parsings")["parseEmail"],
+	parseTime: require("./dates")["parseTime"],
+	parseUri: require("./parsings")["parseUri"],
+	parseUrlLocation: require("./parsings")["parseUrlLocation"],
+	randomNumber: require("./strings")["randomNumber"],
+	randomString: require("./strings")["randomString"],
+	relativeTime: require("./dates")["relativeTime"],
+	removeArrayValues: require("./objects")["removeArrayValues"],
+	removeFalsy: require("./objects")["removeFalsy"],
+	renderTemplate: require("./strings")["renderTemplate"],
+	replaceParams: require("./misc")["replaceParams"],
+	reverseStr: require("./strings")["reverseStr"],
+	rot13: require("./strings")["rot13"],
+	rot31: require("./strings")["rot31"],
+	safeJsonParse: require("./parsings")["safeJsonParse"],
+	safeUuid4: require("./cryptos")["safeUuid4"],
+	sanitize: require("./strings")["sanitize"],
+	sha256: require("./cryptos")["sha256"],
+	slugify: require("./strings")["slugify"],
+	sortArray: require("./objects")["sortArray"],
+	sortBy: require("./objects")["sortBy"],
+	sortObjKeys: require("./objects")["sortObjKeys"],
+	stringify: require("./strings")["stringify"],
+	throttle: require("./timers")["throttle"],
+	timeFormat: require("./dates")["timeFormat"],
+	toDecimals: require("./strings")["toDecimals"],
+	toObject: require("./objects")["toObject"],
+	toShortFormat: require("./strings")["toShortFormat"],
+	trimStr: require("./strings")["trimStr"],
+	uniqueArray: require("./objects")["uniqueArray"],
+	unwindArray: require("./objects")["unwindArray"],
+	uuid4: require("./strings")["uuid4"],
+	validateValue: require("./misc")["validateValue"],
 };
-
-if (typeof define === "function" && define.amd) {
-  define(function () {
-    return jstub;
-  });
-} else if (typeof module === "object" && module.exports) {
-  module.exports = jstub;
-} else {
-  $.jstub = jstub;
-}

@@ -1,22 +1,18 @@
 module.exports = {
-  parseEmail,
   safeJsonParse,
-  urlLocation,
+  parseEmail,
+  parseUrlLocation,
   parseUri,
 };
 
-function parseEmail(input) {
-  const regex = /^([a-z0-9]+(?:[\_\.\-][a-z0-9]+)*)(\+[a-z0-9\_\.\-]+)?@((?:[a-z0-9\-]+\.)+[a-z]{2,})$/i;
-  const match = String(input).toLowerCase().match(regex);
-  if (!match) return null;
-
-  let [email, uname, plus, domain] = match;
-  if (domain === "gmail.com" || domain === "googlemail.com") {
-    email = uname.replace(/\./g, "") + "@" + domain;
-  }
-  return { email, uname, plus, domain };
-}
-
+/**
+ *
+ * @param {string} data
+ * @returns {object} null or data
+ * @example safeJsonParse('{"key":"value"}')
+ * @example safeJsonParse(null)
+ *
+ */
 function safeJsonParse(data) {
   try {
     return JSON.parse(data);
@@ -25,23 +21,59 @@ function safeJsonParse(data) {
   }
 }
 
-function urlLocation(href) {
-  const match = href.match(/^([^\:]+)\:\/?\/?(([^\:\/\?\#]*)(?:\:([0-9]+))?)([\/]{0,1}[^\?\#]*)(\?[^\#]*|)(\#.*|)$/im);
+/**
+ *
+ * @param {string} input
+ * @returns {object}
+ * @example parseEmail("testuser@gmail.com")
+ * @example parseEmail("test.user@gmail.com")
+ * @example parseEmail("user+label@domain.com")
+ * @example parseEmail("test.user@googlemail.com")
+ */
+function parseEmail(input) {
+  const regex = /^([a-z0-9]+(?:[\_\.\-][a-z0-9]+)*)(\+[a-z0-9\_\.\-]+)?@((?:[a-z0-9\-]+\.)+[a-z]{2,})$/i;
 
-  return (
-    match && {
-      href: href,
-      protocol: match[1],
-      host: match[2],
-      hostname: match[3],
-      port: match[4],
-      pathname: match[5],
-      search: match[6],
-      hash: match[7],
-    }
-  );
+  const match = String(input).toLowerCase().match(regex);
+  if (!match) return null;
+
+  let [email, uname, plus, domain] = match;
+  if (domain === "gmail.com" || domain === "googlemail.com") {
+    email = uname.replace(/\./g, "") + "@" + domain;
+  }
+  return { email, uname, plus, domain, toString: () => email };
 }
 
+/**
+ *
+ * @param {string} href
+ * @returns {object}
+ * @example parseUrlLocation("https://example.com/path?query=1#hash")
+ */
+function parseUrlLocation(href) {
+  if (typeof href !== "string") throw new Error("parseUrlLocation: 1st argument must be a valid string");
+
+  const match = href.match(/^([^\:]+)\:\/?\/?(([^\:\/\?\#]*)(?:\:([0-9]+))?)([\/]{0,1}[^\?\#]*)(\?[^\#]*|)(\#.*|)$/im);
+  if (!match) return null;
+
+  return {
+    origin: `${match[1]}://${match[2]}`,
+    href: href,
+    protocol: match[1],
+    host: match[2],
+    hostname: match[3],
+    port: match[4],
+    pathname: match[5],
+    search: match[6],
+    hash: match[7],
+  };
+}
+
+/**
+ * parseUri - Parses a URI string into its components or converts an object to a URI string.
+ *
+ * @param {string|Object} inp - URI string to parse or object to stringify.
+ * @returns {Object|string} - URI object if parsing, URI string if stringifying.
+ */
 function parseUri(inp) {
   const parseQS = (inp) => {
     try {
@@ -88,7 +120,6 @@ function parseUri(inp) {
   };
 
   this.parse = (str) => {
-    console.log(str);
     str = String(str);
     // seperate hash
     const [p1, hash] = /\#/.test(str) ? detachEnd(str, "#") : [str];
@@ -104,8 +135,8 @@ function parseUri(inp) {
     const [host, port] = /\:/.test(hostname) ? detachStart(hostname, ":") : [hostname];
     // separate user & pass
     let [user, pass] = /\:/.test(auth) ? detachStart(auth, ":") : [auth];
-    user = decodeURIComponent(user);
-    pass = decodeURIComponent(pass);
+    if (user) user = decodeURIComponent(user);
+    if (pass) pass = decodeURIComponent(pass);
 
     return {
       href: str,
